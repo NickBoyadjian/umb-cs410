@@ -42,3 +42,62 @@ Creature getRandomCreature() {
   std::srand(time(NULL));
   return creatures[rand() % 14];
 }
+
+bool hasAllCreatures(Creature cards[], int i) {
+  for (int j = 0; j < 14; j++) { // go through every creature
+    bool found = false;
+    std::string name = creatures[j].name;
+    for (int k = 0; k < i; k++) { // check if the creature is in cards
+      if (name == cards[k].name) {
+        found = true;
+        break;
+      }
+    }
+    if (found == false) {
+      return false;
+    }
+  }
+  std::cout << "Krusty now has cards from:" << std::endl;
+  for (int i = 0; i < 15; i++) {
+    std::cout << creatures[i].name << std::endl;
+  }
+  return true;
+}
+
+void printCards(Creature cards[], int i, int j) {
+  std::cout << "winning cards:" << std::endl;
+
+  for (; i < j; i++) {
+    std::cout << cards[i].name << std::endl;
+  }
+}
+
+bool hasStack(Creature cards[], int i) {
+  if (i < 5)
+    return false;
+
+  for (int j = 0; j < (i - 6); j++) {
+    for (int k = 0; k < 6; k++) {
+      if (!(cards[j + k].height <= cards[j + k + 1].height &&
+            cards[j + k].height <= cards[j + k + 1].width &&
+            cards[j + k].width <= cards[j + k + 1].height &&
+            cards[j + k].width <= cards[j + k + 1].width &&
+            (cards[j + k + 1].width > cards[j + k].width ||
+             cards[j + k + 1].width > cards[j + k].height ||
+             cards[j + k + 1].height > cards[j + k].width ||
+             cards[j + k + 1].height > cards[j + k].height))) {
+        std::cout << "nobueno";
+        break;
+      } else if (k >= 6) {
+        printCards(cards, j, k);
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+bool canLeave(Creature cards[], int i) {
+  return hasAllCreatures(cards, i); // || hasStack(cards, i);
+}
