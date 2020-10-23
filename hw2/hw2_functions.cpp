@@ -1,37 +1,41 @@
 #include "hw2_functions.h"
 
-std::string creatureSayings[14] = {
-    "Whazzup?",
-    "Duuude, totally love the clown head and human body combo!",
-    "Looking for a card (shark)?",
-    "Are you someone famous?",
-    "You look fishy to me; or are you clowning around?",
-    "Don't trust the salmon!!!",
-    "Here's some advice: the shark wants you to be his chum!",
-    "Better take some paper towels if you visit the blobfish",
-    "Hey man, got any sea-weed?",
-    "Let me give you my card...my phone number is on the back",
-    "I'd gladly pay you Tuesday for a lobster roll today.",
-    "Don't be so crabby!",
-    "Just keep swimming, swimmin, swimming, ...",
-    "You just keep sinking, sinking, sinking,..."};
+std::string creatureSayings[14];
+Creature creatures[14];
 
-Creature creatures[14] = {Creature("Wanda Walrus", 2, 6),
-                          Creature("Stanley Sardine", 3, 1),
-                          Creature("Sylvia Seahorse", 4, 2),
-                          Creature("Janie Jellyfish", 1, 10),
-                          Creature("Doris Dolphin", 8, 4),
-                          Creature("Bob Blobfish", 1, 5),
-                          Creature("Sammy Shark", 8, 4),
-                          Creature("Walter Whale", 6, 2),
-                          Creature("Stevie Salmon", 2, 3),
-                          Creature("Sheila Shellfish", 1, 3),
-                          Creature("Daniel Octopus", 3, 7),
-                          Creature("Mark Herrings", 9, 5),
-                          Creature("Bernie Tuna", 3, 5),
-                          Creature("Oscar Tilapia", 5, 3)
+void getCreatures(Creature arr[]) {
+  std::ifstream file;
+  file.open("creatures.txt");
+  for (int i = 0; i < 14; i++) {
+    std::string fname;
+    std::string lname;
+    int w;
+    std::string x;
+    int h;
+    file >> fname;
+    file >> lname;
+    file >> w;
+    file >> x;
+    file >> h;
+    arr[i] = Creature(fname + " " + lname, w, h);
+  }
+  file.close();
+}
 
-};
+void getSayings(std::string arr[]) {
+  std::ifstream file;
+  file.open("sayings.txt");
+  for (int i = 0; i < 14; i++) {
+    std::string saying;
+    getline(file, saying);
+    arr[i] = saying;
+  }
+}
+
+void init() {
+  getCreatures(creatures);
+  getSayings(creatureSayings);
+}
 
 std::string getRandomSaying() {
   std::srand(time(NULL));
@@ -72,32 +76,81 @@ void printCards(Creature cards[], int i, int j) {
   }
 }
 
-bool hasStack(Creature cards[], int i) {
-  if (i < 5)
-    return false;
+// bool hasStack(Creature cards[], int i) {
+//   if (i < 5)
+//     return false;
 
-  for (int j = 0; j < (i - 6); j++) {
-    for (int k = 0; k < 6; k++) {
-      if (!(cards[j + k].height <= cards[j + k + 1].height &&
-            cards[j + k].height <= cards[j + k + 1].width &&
-            cards[j + k].width <= cards[j + k + 1].height &&
-            cards[j + k].width <= cards[j + k + 1].width &&
-            (cards[j + k + 1].width > cards[j + k].width ||
-             cards[j + k + 1].width > cards[j + k].height ||
-             cards[j + k + 1].height > cards[j + k].width ||
-             cards[j + k + 1].height > cards[j + k].height))) {
-        std::cout << "nobueno";
-        break;
-      } else if (k >= 6) {
-        printCards(cards, j, k);
-        return true;
+//   for (int j = 0; j < (i - 6); j++) {
+//     for (int k = 0; k < 6; k++) {
+//       if (!(cards[j + k].height <= cards[j + k + 1].height &&
+//             cards[j + k].height <= cards[j + k + 1].width &&
+//             cards[j + k].width <= cards[j + k + 1].height &&
+//             cards[j + k].width <= cards[j + k + 1].width &&
+//             (cards[j + k + 1].width > cards[j + k].width ||
+//              cards[j + k + 1].width > cards[j + k].height ||
+//              cards[j + k + 1].height > cards[j + k].width ||
+//              cards[j + k + 1].height > cards[j + k].height)) ||
+//              !(cards[j + k].name == cards[j + k + 1].name)) {
+//         break;
+//       } else if (k >= 5) {
+//         std::cout << "hello?" << std::endl << std::endl << std::endl;
+//         printCards(cards, j, k);
+//         return true;
+//     }
+//   }
+
+//   return false;
+// }
+
+bool hasStack(Creature cards[], int length) {
+  // loop 0 to length - 6
+  // take next 6 distict cards into new array
+  // if this new array follows the right rules
+  // return true
+
+  // if we never find true, return false
+
+  for (int i = 0; i < length - 6; i++) {
+    Creature newCards[6];
+    newCards[0] = cards[i];
+    int newCardsSize = 1;
+    int offset = 1;
+    while (newCardsSize < 6 && i + offset < length) {
+      if (newCards[newCardsSize - 1].name != cards[i + offset].name) {
+        newCards[newCardsSize++] = cards[i + offset];
+      } else {
+        offset++;
       }
     }
-  }
+    if (newCardsSize == 6) {
+      bool result = true;
+      for (int j = 0; j < 5; j++) {
+        if (!(newCards[j].height <= newCards[j + 1].height &&
+              newCards[j].height <= newCards[j + 1].width &&
+              newCards[j].width <= newCards[j + 1].height &&
+              newCards[j].width <= newCards[j + 1].width &&
+              ((newCards[j + 1].width > newCards[j].width) ||
+               (newCards[j + 1].width > newCards[j].height) ||
+               (newCards[j + 1].height > newCards[j].width) ||
+               (newCards[j + 1].height > newCards[j].height)))) {
+          result = false;
+        }
+      }
+      if (result == true) {
+        std::cout << std::endl << "You got a stack of 6:" << std::endl;
 
+        for (int n = 0; n < 6; n++) {
+          std::cout << newCards[n].name << newCards[n].name << " x "
+                    << newCards[n].name << std::endl;
+        }
+
+        return true;
+      };
+    }
+  }
   return false;
 }
 
 bool canLeave(Creature cards[], int i) {
-  return hasAllCreatures(cards, i); // || hasStack(cards, i);
+  return hasAllCreatures(cards, i) || hasStack(cards, i);
 }
