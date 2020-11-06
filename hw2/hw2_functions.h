@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -26,5 +27,7 @@ struct Creature {
 std::string getRandomSaying();
 Creature getRandomCreature();
 bool canLeave(Creature cards[], int i);
+void getCreatures(Creature arr[]);
+void init();
 
 #endif

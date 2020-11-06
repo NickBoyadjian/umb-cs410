@@ -7,6 +7,7 @@ bool sortFunc(Creature a, Creature b) {
 int main() {
   // stores all the cards currently collected
   Creature cards[150];
+  init();
 
   // get cards from random creatures and store them in cards array
   // at each step, check if we can go home
