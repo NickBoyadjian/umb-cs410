@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <queue>
 
 class Fraction {
   private:
@@ -21,5 +22,11 @@ class Fraction {
   Fraction(int n, int d);
   std::string toString();
 };
+
+// template <class T>
+// enqueue(T t, queue<T> q) {
+//   q->push(t);
+// }
+
 
 #endif
